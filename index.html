@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ShareBite – Food Waste Management</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top">
+    <div class="logo">🌱 ShareBite</div>
+    <div class="me"><label style="flex-direction:row;align-items:center;color:inherit">Your name / organization:&nbsp;<input id="meName" placeholder="e.g. Green Cafe"></label></div>
+  </div>
+  <nav id="nav">
+    <button data-p="home" class="on">Home</button>
+    <button data-p="donate">Donate Food</button>
+    <button data-p="find">Find Food</button>
+    <button data-p="locations">Locations</button>
+    <button data-p="history">My History</button>
+  </nav>
+</div></header>
+
+<main class="wrap">
+<div id="alerts"></div>
+
+<section id="home" class="on">
+  <div class="card">
+    <h2>Turn surplus food into meals</h2>
+    <p class="muted">ShareBite connects restaurants, shops, events and households that have extra food with charities and food banks nearby. Less waste, fewer hungry people.</p>
+    <div class="stats">
+      <div class="stat"><b id="sAvail">0</b>Available now</div>
+      <div class="stat"><b id="sClaimed">0</b>Donations claimed</div>
+      <div class="stat"><b id="sKg">0</b>kg food rescued</div>
+      <div class="stat"><b id="sMeals">0</b>Meals (approx.)</div>
+    </div>
+  </div>
+  <div class="steps">
+    <div class="card"><h3>1. Post</h3><p class="muted">Donors list the food, quantity, area and the time it stays safe.</p></div>
+    <div class="card"><h3>2. Match</h3><p class="muted">Recipients choose their area and see the nearest food first.</p></div>
+    <div class="card"><h3>3. Claim</h3><p class="muted">Claim the food and collect it. Perishable items show countdown alerts.</p></div>
+  </div>
+</section>
+
+<section id="donate">
+  <div id="loginBox" class="card">
+    <h2>Donor login</h2>
+    <p class="muted">Donors log in so recipients know who posted the food. Recipients can browse and claim without an account.<br>Demo account: <b>demo@sharebite.org</b> / password <b>demo</b></p>
+    <div class="row" style="margin-bottom:12px"><button class="btn" id="tabLogin" type="button">Login</button><button class="btn sec" id="tabReg" type="button">Create account</button></div>
+    <form id="authForm">
+      <label class="regOnly" style="display:none">Name / organization<input id="aName" name="name"></label>
+      <label class="regOnly" style="display:none">Phone<input name="phone" type="tel" placeholder="Contact number"></label>
+      <label class="regOnly" style="display:none">Donor type<select name="dtype"><option>Restaurant / Hotel</option><option>Shop / Supermarket</option><option>Event / Function hall</option><option>Individual / Household</option><option>Other</option></select></label>
+      <label class="regOnly" style="display:none">Usual pickup area<select name="darea" class="areaSel"></select></label>
+      <label class="regOnly full" style="display:none">Address<input name="address" placeholder="Street, landmark"></label>
+      <label>Email<input name="email" type="email" required></label>
+      <label>Password<input name="pass" type="password" minlength="4" required></label>
+      <div class="full"><button class="btn" type="submit" id="authBtn">Login</button></div>
+    </form>
+    <p class="muted" id="authMsg"></p>
+  </div>
+  <div id="donateBox" style="display:none">
+  <div class="card">
+    <div class="row"><h2>Post surplus food</h2><div><span id="who" class="muted"></span> <button class="btn sec" id="logout" type="button">Log out</button></div></div>
+    <form id="donateForm">
+      <label>Food item<input name="title" required placeholder="e.g. Veg biryani"></label>
+      <label>Quantity (kg)<input name="kg" type="number" min="0.5" step="0.5" required value="5"></label>
+      <label>Food type<select name="type"><option>Cooked meal</option><option>Bakery</option><option>Fruits & vegetables</option><option>Packaged / dry goods</option><option>Dairy</option></select></label>
+      <label>Pickup area<select name="area" class="areaSel" required></select></label>
+      <label>Safe to eat for (hours)<input name="hours" type="number" min="1" max="720" required value="6"></label>
+      <label>Contact<input name="contact" placeholder="Phone or email"></label>
+      <label class="full">Notes (optional)<textarea name="notes" rows="2" placeholder="Vegetarian, packed in boxes, ask at the front desk..."></textarea></label>
+      <div class="full"><button class="btn" type="submit">Post donation</button></div>
+    </form>
+  </div>
+  </div>
+</section>
+
+<section id="find">
+  <div class="card">
+    <h2>Find food near you</h2>
+    <div class="filters">
+      <label>Your area<select id="myArea" class="areaSel"></select></label>
+      <button class="btn sec" id="gpsBtn" type="button">Use my GPS</button>
+      <label>Food type<select id="fType"><option value="">All</option><option>Cooked meal</option><option>Bakery</option><option>Fruits & vegetables</option><option>Packaged / dry goods</option><option>Dairy</option></select></label>
+      <label>Sort by<select id="fSort"><option value="dist">Nearest first</option><option value="exp">Expiring soon</option></select></label>
+    </div>
+    <div id="list"></div>
+  </div>
+</section>
+
+<section id="locations">
+  <div class="card">
+    <h2>Manage locations</h2>
+    <p class="muted">Add your own places or change the sample ones. Distances are worked out from latitude and longitude.</p>
+    <form id="locForm">
+      <label>Place name<input id="locName" required placeholder="e.g. Town Hall"></label>
+      <label>Latitude<input id="locLat" type="number" step="any" min="-90" max="90" required></label>
+      <label>Longitude<input id="locLng" type="number" step="any" min="-180" max="180" required></label>
+      <div class="full row" style="justify-content:flex-start">
+        <button class="btn" id="locSave" type="submit">Add location</button>
+        <button class="btn sec" id="locGps" type="button">Use my GPS for latitude / longitude</button>
+        <button class="btn sec" id="locCancel" type="button" style="display:none">Cancel edit</button>
+      </div>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Saved locations</h2>
+    <div class="scroll" id="locList"></div>
+    <button class="btn sec" id="locReset" type="button" style="margin-top:10px">Reset to sample locations</button>
+  </div>
+</section>
+
+<section id="history">
+  <div class="card"><h2>My donor details</h2><div id="hProfile"></div><p class="muted">Saved in this browser's local storage (key: <b>sharebite_donors</b>).</p></div>
+  <div class="card"><h2>Donations I posted</h2><div class="scroll" id="hPosted"></div></div>
+  <div class="card"><h2>Food I claimed</h2><div class="scroll" id="hClaimed"></div></div>
+  <button class="btn sec" id="reset">Reset demo data</button>
+</section>
+</main>
+<footer>Reduce waste · Feed people · Build a sustainable community</footer>
+<div id="toast"></div>
+
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/helpers.js"></script>
+<script src="js/location.js"></script>
+<script src="js/home.js"></script>
+<script src="js/donors.js"></script>
+<script src="js/donations.js"></script>
+<script src="js/find.js"></script>
+<script src="js/history.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
